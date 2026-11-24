@@ -231,12 +231,12 @@ openDM = (function (orig) { return function (id) { const d = S.ig.dms.find(x => 
 // ---- casa: momento privato (solo 18+)
 const _doActV5 = doAct;
 doAct = function (a, o) {
-  if (a === 'sega') { const p = S.p; let e; if (p.age < 18) return 'Disponibile dai 18 anni.'; if (e = needAct()) return e; S.act--; p.stx = Math.round(p.stx / 2); ADJ('mo', 3); return 'Fatto. Stress dimezzato 😮‍💨'; }
+  if (a === 'sega') { const p = S.p; let e; if (e = needAct()) return e; S.act--; p.stx = Math.round(p.stx / 2); ADJ('mo', 3); return '🪚 ' + pick(['Hai costruito una mensola nuova per il soggiorno.', 'Hai segato e montato un tavolino per il terrazzo.', 'Hai sistemato la porta del ripostiglio che cigolava.', 'Hai fatto una casetta per gli uccellini.', 'Hai costruito una scarpiera in legno.']) + ' Stress dimezzato.'; }
   return _doActV5(a, o);
 };
 const _openPlaceV5 = openPlace;
 openPlace = function (id) {
   if (id !== 'casa') return _openPlaceV5(id);
   const p = S.p; const o = (txt, sub, call, dis) => `<button class="opt" ${dis ? 'disabled' : ''} onclick="${call}"><b>${txt}</b><span class="mut small">${sub}</span></button>`;
-  openSheet(() => `<h3>🏠 Casa · ${HOUSES[p.house].n}</h3><div class="col">${o('Riposa tutto il giorno', '+35 energia', "uiAct('rest')")}${o('Videogiochi con gli amici', '+6 morale', "uiAct('games')")}${o('Studia i video delle partite', 'piccolo miglioramento tecnico', "uiAct('study')")}${p.age >= 18 ? o('🍆 Sega', 'dimezza lo stress', "uiAct('sega')") : ''}</div>`);
+  openSheet(() => `<h3>🏠 Casa · ${HOUSES[p.house].n}</h3><div class="col">${o('Riposa tutto il giorno', '+35 energia', "uiAct('rest')")}${o('Videogiochi con gli amici', '+6 morale', "uiAct('games')")}${o('Studia i video delle partite', 'piccolo miglioramento tecnico', "uiAct('study')")}${o('🪚 Fai da te con la sega', 'bricolage in garage, dimezza lo stress', "uiAct('sega')")}</div>`);
 };
