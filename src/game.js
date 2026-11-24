@@ -19,14 +19,21 @@ function newCareer(cr) {
 function prepareSlot() {
   const sl = curSlot(); const se = S.se; const info = slotInfo(sl); const club = se.club; const q = [];
   if (sl.k === 'N') {
-    const nat = NATMAP[S.p.nat]; const o = ovr();
-    const called = o >= nat.s - 6 && S.p.inj <= 0 && S.p.age >= 17;
-    if (called && !S.p.firstCall) { S.p.firstCall = true; news('PRIMA CONVOCAZIONE in nazionale ' + nat.f + ' ' + nat.n + '!', '🎉'); S.p.fame = clamp(S.p.fame + 4, 0, 100); }
+    const nat = NATMAP[S.p.nat]; const L = natLevel(); const called = L.lvl === 'A';
+    if (called && !S.p.firstCall) { S.p.firstCall = true; news('PRIMA CONVOCAZIONE in nazionale maggiore ' + nat.f + ' ' + nat.n + '!', '🎉'); S.p.fame = clamp(S.p.fame + 4, 0, 100); }
+    if (L.lvl && L.lvl !== 'A' && !(S.p.firstY || {})[L.lvl]) { S.p.firstY = Object.assign(S.p.firstY || {}, { [L.lvl]: true }); news('Prima convocazione con la nazionale ' + L.name + ' ' + nat.f + '!', '🎉'); S.p.fame = clamp(S.p.fame + 1.5, 0, 100); }
     S.p.called = called;
     const confN = NATIONS.filter(x => x.c === nat.c && x.n !== nat.n);
     for (let i = 0; i < 2; i++) {
       const opp = weightedPick(confN, x => 1 / (1 + Math.abs(x.s - nat.s) / 4));
       q.push({ kind: 'N', label: nat.f + ' ' + se.nq.label, us: { n: nat.n, s: nat.s, f: nat.f }, them: { n: opp.n, s: opp.s, f: opp.f }, home: i === 0, ko: false, play: called, isNat: true });
+    }
+    if (L.lvl && L.lvl !== 'A') {
+      const d = L.lvl === 'U21' ? 14 : 20; const lab = nat.f + ' ' + L.name + ' · ' + (nat.c === 'UEFA' ? 'Qualificazioni Europeo ' + L.name : 'Amichevoli ' + L.name);
+      for (let i = 0; i < 2; i++) {
+        const opp = weightedPick(confN, x => 1 / (1 + Math.abs(x.s - nat.s) / 4));
+        q.push({ kind: 'NY', label: lab, us: { n: nat.n + ' ' + L.name, s: nat.s - d, f: nat.f }, them: { n: opp.n + ' ' + L.name, s: opp.s - d, f: opp.f }, home: i === 0, ko: false, play: true, isNat: true, youth: L.lvl });
+      }
     }
   } else if (info.bye) {
     q.push({ kind: 'BYE' });
@@ -81,6 +88,7 @@ function applyMatch(ctx, r) {
   if (r.played) {
     const isClub = !ctx.isNat;
     if (isClub) { se.st.apps++; se.st.goals += r.goals; se.st.assists += r.assists; se.st.votes.push(r.v); se.st.saves += r.saves; if (r.start) se.st.starts++; if (r.gt === 0 && r.start && (p.ruolo === 'DIF' || p.ruolo === 'POR')) se.st.clean++; p.tot.apps++; p.tot.goals += r.goals; p.tot.assists += r.assists; }
+    else if (ctx.kind === 'NY') { p.capsY = (p.capsY || 0) + 1; p.goalsY = (p.goalsY || 0) + r.goals; }
     else { p.caps++; p.natGoals += r.goals; }
     if (isClub) { const b = r.goals * S.ct.bg + r.assists * S.ct.ba; if (b > 0) { p.money += b; p.earned += b; } }
     const tw = clamp((ctx.us.s - 40) / 40, .1, 1.3) * (ctx.isNat || ctx.kind === 'E' || ctx.kind === 'T' ? 1.6 : 1);
@@ -376,4 +384,14 @@ function flirtSex(prot) {
   if (p.contacts.length >= 8) p.contacts.shift();
   p.contacts.push({ n: F.girl.n, rel: 25 });
   if (recent >= 6) news('Lino ti avverte: "Stai esagerando con le serate, occhio alla salute e alla forma."', '💼');
+}
+
+// livello di convocazione: maggiore, Under 21 o Under 19 (non esclusivo: se sei fortissimo ti chiama la maggiore anche a 16 anni)
+function natLevel(p = S.p) {
+  const nat = NATMAP[p.nat], o = ovr(p);
+  if (p.inj > 0) return { lvl: null };
+  if (o >= nat.s - 6) return { lvl: 'A', name: 'maggiore' };
+  if (p.age <= 20 && o >= nat.s - 19) return { lvl: 'U21', name: 'Under 21' };
+  if (p.age <= 18 && o >= nat.s - 27) return { lvl: 'U19', name: 'Under 19' };
+  return { lvl: null };
 }
