@@ -224,7 +224,7 @@ function brStep(id, i) {
   if (o.bye) return;
   if (o.inv) {
     d.thread.push({ w: 'm', t: o.t });
-    const pAcc = clamp(d.int / 100 + INVMOD[d.voice][o.inv] + (d.g.pers === 'arrivista' ? (p.fame - 40) / 150 : 0) + (o.inv === 'casa' && d.g.pers === 'disinibita' ? .2 : 0), .03, .95);
+    const pAcc = clamp(d.int / 100 + INVMOD[d.voice][o.inv] + (d.g.pers === 'arrivista' ? (p.fame - 40) / 150 : 0) + (o.inv === 'casa' && d.g.pers === 'disinibita' ? .2 : 0), .03, .85);
     if (d.int >= 35 && R() < pAcc) {
       d.thread.push({ w: 't', t: B.yes[o.inv] });
       (p.dates = p.dates || []).push({ n: d.g.n, type: o.inv, due: S.abs + 1, dmId: d.id, done: false });
@@ -280,7 +280,7 @@ function goDate(i) {
   STX(-10); ADJ('mo', 6); if (dt.type === 'amici') ADJ('com', 1);
   const int = d ? d.int : 50; if (c) c.rel = clamp(c.rel + 12, 0, 100);
   if (g.pers === 'romantica' && c && c.rel >= 60 && !p.partner) { p.partner = { n: g.n, rel: 70 }; news('Ti sei fidanzato con ' + g.n + '! ❤️', '❤️'); }
-  let chance = clamp(int / 100 + { pizza: 0, amici: -.1, cena: .1, casa: .3 }[dt.type] + (g.pers === 'disinibita' ? .25 : 0) + (VOICE[g.pers] === 'dolce' ? -.15 : 0) + charm() / 200, .05, .95);
+  let chance = clamp(int / 100 + { pizza: 0, amici: -.1, cena: .1, casa: .3 }[dt.type] + (g.pers === 'disinibita' ? .25 : 0) + (VOICE[g.pers] === 'dolce' ? -.15 : 0) + charm() / 200, .05, .85);
   const vanish = g.pers === 'disonesta' && R() < .4;
   F = { girl: g, place: DATE_TXT[dt.type][0], int, step: 'date', chance, vanish, cost, drink: 0, log: [] };
   save(); render(); openSheet(renderDate);

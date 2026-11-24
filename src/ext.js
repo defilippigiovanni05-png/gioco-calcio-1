@@ -44,7 +44,7 @@ function flirtChoose(kind) {
 }
 function flirtTry() {
   const need = 55 + rnd(-8, 8);
-  if (F.int >= need) { F.step = 4; F.log.push(F.girl.n + ' ti prende per mano: "Andiamo da te?"'); STX(-6); }
+  if (F.int >= need && R() > .15) { F.step = 4; F.log.push(F.girl.n + ' ti prende per mano: "Andiamo da te?"'); STX(-6); }
   else { F.step = 9; ADJ('mo', -4); STX(3); F.log.push('Ti guarda e ride: "Ma anche no." Torni dagli amici con la coda tra le gambe.'); }
 }
 function addContact(g, rel) { const p = S.p; const ex = p.contacts.find(c => c.n === g.n); if (ex) { ex.rel = Math.max(ex.rel, rel); return; } if (p.contacts.length >= 12) p.contacts.shift(); p.contacts.push({ n: g.n, rel, g }); }
@@ -75,7 +75,7 @@ function contactMeet(i) {
   if (p.age < 18) return 'Devi avere 18 anni.';
   if (e = needAct()) return e;
   S.act--;
-  const g = c.g || genGirl(); const chance = clamp(.25 + c.rel / 100 + charm() / 40 - (g.r - girlCap()) * .08, .05, .95);
+  const g = c.g || genGirl(); const chance = clamp(.25 + c.rel / 100 + charm() / 40 - (g.r - girlCap()) * .08, .05, .85);
   if (R() < chance) { F = { girl: g, place: 'a casa tua', int: 80, step: 4, drink: 0, log: [g.n + ' accetta: "Arrivo tra mezz’ora."'] }; return null; }
   c.rel = Math.max(0, c.rel - 5); ADJ('mo', -3); return g.n + ' ti visualizza e non risponde. Ahia.';
 }
