@@ -116,7 +116,7 @@ function renderCreate() {
     if (!c.offers) {
       newCareer({ nome: c.nome || 'Marco', cognome: c.cognome || 'Rossi', nat: c.nat, ruolo: c.ruolo, stile: c.stile, num: c.num, look: c.look, st: crStats() });
       const dIds = S.teams.filter(t => t.c === 'Italia' && S.tg[t.id] && S.tg[t.id].startsWith('Italia|3')).map(t => t.id);
-      c.dIds = dIds; c.offers = shuffle(dIds.slice()).slice(0, 3).map(id => firstOffer(id)); c.S = S;
+      c.dIds = dIds; c.offers = shuffle(dIds.slice().sort((a, b) => T(a).s - T(b).s).slice(0, 14)).slice(0, 3).map(id => firstOffer(id)); c.S = S;
     } else S = c.S;
     const keep = S; S = null;
     h += `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · il tuo procuratore<p>"Ciao ${esc(c.nome || 'campione')}! Sono Lino, da oggi curo io i tuoi interessi. Ho parlato con tre società di Serie D che ti vogliono. Scegli tu, poi a fine stagione ti porto le offerte vere."</p></div></div>

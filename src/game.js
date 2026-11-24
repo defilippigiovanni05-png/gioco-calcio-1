@@ -188,8 +188,8 @@ function endSeason() {
   const L = se.fx.length;
   if (se.st.goals >= Math.max(12, Math.round(L * .55))) { sum.awards.push('Capocannoniere ' + li.name); p.awards.push({ n: 'Capocannoniere ' + li.tierName, y: S.year + 1 }); }
   const bd = se.st.goals * 1.6 + se.st.assists + (avg - 6) * 25 + sum.troph.length * 12 + (T(se.club).s - 70) * 1.2;
-  if (ovr() >= 86 && bd > 88 + rnd(0, 25)) { sum.awards.push('PALLONE D’ORO'); p.awards.push({ n: 'Pallone d’Oro', y: S.year + 1 }); p.fame = clamp(p.fame + 10, 0, 100); }
-  else if (ovr() >= 80 && bd > 62) sum.awards.push('Top 10 al Pallone d’Oro');
+  if (ovr() >= 90 && bd > 88 + rnd(0, 25)) { sum.awards.push('PALLONE D’ORO'); p.awards.push({ n: 'Pallone d’Oro', y: S.year + 1 }); p.fame = clamp(p.fame + 10, 0, 100); }
+  else if (ovr() >= 84 && bd > 62) sum.awards.push('Top 10 al Pallone d’Oro');
   if (p.age <= 21 && ovr() >= 72 && avg >= 6.6 && se.st.apps >= 18) { sum.awards.push('Golden Boy'); p.awards.push({ n: 'Golden Boy', y: S.year + 1 }); p.fame = clamp(p.fame + 4, 0, 100); }
   // obiettivo
   const ob = S.ct.obj; const val = ob.k === 'ga' ? se.st.goals + se.st.assists : se.st[ob.k];

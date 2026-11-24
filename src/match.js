@@ -94,8 +94,9 @@ function resolveChance(ok, q) {
   let txt = '', rk = ok ? 'ok' : 'ko';
   const mm = m.curMin + "' ";
   if (win === 'goal') {
-    if (ok && R() < (q >= .85 ? .92 : q >= .7 ? .82 : .7)) { m.gu++; st.goals++; txt = '⚽ GOOOL! Hai segnato!'; m.feed.unshift(mm + '⚽ GOL DI ' + esc(S.p.cognome.toUpperCase()) + '!'); }
-    else if (ok) { st.stops += .5; txt = '🧤 Gran conclusione, ma il portiere fa un miracolo!'; rk = 'mid'; m.feed.unshift(mm + 'Il portiere ti nega il gol.'); }
+    const kp = clamp(.42 + (m.sThem - 45) * .0105, .42, .8) * (q >= .85 ? .92 : 1);
+    if (ok && R() >= kp) { m.gu++; st.goals++; txt = '⚽ GOOOL! Hai segnato!'; m.feed.unshift(mm + '⚽ GOL DI ' + esc(S.p.cognome.toUpperCase()) + '!'); }
+    else if (ok) { st.stops += .5; txt = pick(['🧤 Tiro perfetto… ma il portiere fa un miracolo!', '🧤 Gran conclusione, il portiere ci arriva con la punta delle dita!', '😱 Palo pieno!', '😱 Traversa! Sarebbe stato un gol pazzesco.']); rk = 'mid'; m.feed.unshift(mm + (txt.includes('Palo') || txt.includes('Traversa') ? 'Legno di ' : 'Il portiere nega il gol a ') + esc(S.p.cognome) + '.'); }
     else { st.fails++; txt = pick(['❌ Fuori di poco!', '❌ Tiro debole, para facile.', '❌ Palla in curva.', '❌ Ti rimpallano il tiro.']); m.feed.unshift(mm + 'Occasione sprecata.'); }
   } else if (win === 'assist') {
     if (ok && R() < .66) { m.gu++; st.assists++; txt = '🎯 ASSIST! Il compagno la mette dentro!'; m.feed.unshift(mm + '⚽ GOL ' + esc(m.ctx.us.n) + ' su assist di ' + esc(S.p.cognome) + '!'); }
