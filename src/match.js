@@ -14,6 +14,7 @@ function openMatch(ctx, dec) {
   ev.sort((a, b) => a.m - b.m);
   UI.m = { ctx, dec, ev, ei: 0, min: 0, gu: 0, gt: 0, feed: [], st: { goals: 0, assists: 0, saves: 0, stops: 0, fails: 0, err: 0, card: 0, used: [] }, state: 'run', enter, sUs, sThem: ctx.them.s, red: false };
   UI.m.feed.push(start ? '🟢 Sei titolare! Il mister ti ha dato fiducia.' : '🪑 Parti dalla panchina, tieniti pronto.');
+  if (UI.simMode) { UI.m.headless = true; return simRun(); }
   renderMatch(); runClock();
 }
 function runClock() {
@@ -36,7 +37,7 @@ function runClock() {
 function updClock() { const m = UI.m; const a = $('#mclock'); if (a) a.textContent = m.min + "'"; const s = $('#mscore'); if (s) s.textContent = (m.ctx.home ? m.gu : m.gt) + ' - ' + (m.ctx.home ? m.gt : m.gu); const f = $('#mfeed'); if (f) f.innerHTML = m.feed.slice(0, 12).map(x => `<p>${x}</p>`).join(''); }
 function effStat(k) { const p = S.p; return p.st[k] + (styleStats().includes(k) ? 3 : 0) + (p.en - 60) / 8 + (p.mo - 50) / 10 + (p.fo - 50) / 10 - Math.max(0, (p.stx || 0) - 55) / 5 + (p.st.men - 50) / 25; }
 function renderMatch() {
-  const m = UI.m, c = m.ctx; const H = c.home ? c.us : c.them, A = c.home ? c.them : c.us;
+  const m = UI.m, c = m.ctx; if (m.headless) return; const H = c.home ? c.us : c.them, A = c.home ? c.them : c.us;
   let panel = '';
   if (m.state === 'chance') {
     panel = `<div class="chance"><div class="cmin">${m.curMin}' · TOCCA A TE</div>${pitch(m.cur)}<p class="ctxt">${m.cur[0]}</p><div class="col">${m.cur[1].map((o, i) => `<button class="opt" onclick="chooseOpt(${i})"><b>${o[0]}</b><span class="mut small">${SNAME[o[1]]} ${S.p.st[o[1]]}${o[2] >= 5 ? ' · difficile' : o[2] <= -3 ? ' · sicura' : ''}</span></button>`).join('')}</div></div>`;
@@ -71,7 +72,7 @@ function pitch(ch) {
 function chooseOpt(i) {
   const m = UI.m; m.opt = m.cur[1][i]; const k = m.opt[1];
   const diff = m.sThem + m.opt[2] + 3; const eff = effStat(k);
-  m.diff = diff; m.eff = eff; m.zw = clamp(14 + (eff - diff) * .7, 7, 36); m.zc = rnd(25, 75); m.spd = 2.6 + clamp(m.opt[2], -6, 12) * .08 + (m.sThem - 50) * .015;
+  m.diff = diff; m.eff = eff; m.zw = clamp(15 + (eff - diff) * .8, 7, 34); m.zc = rnd(22, 78); m.spd = clamp(2.4 + (diff - eff) * .04 + clamp(m.opt[2], -6, 12) * .05, 1.8, 4.2);
   m.state = 'timing'; m.t0 = performance.now(); renderMatch();
 }
 function animTiming() {
@@ -82,23 +83,23 @@ function animTiming() {
 function tapTiming() {
   const m = UI.m; if (m.state !== 'timing') return; cancelAnimationFrame(ANIM);
   const dist = Math.abs(m.x - m.zc), hw = m.zw / 2;
-  const q = dist <= hw ? 1 - .3 * (dist / hw) : clamp(.35 - (dist - hw) / 60, .05, .35);
+  const inZ = dist <= hw; const q = inZ ? 1 - .3 * (dist / hw) : clamp(.35 - (dist - hw) / 60, .05, .35);
   const base = 1 / (1 + Math.exp(-(m.eff - m.diff) / 6));
-  const pf = clamp(base * (.45 + .75 * q), .03, .95);
+  const pf = inZ ? clamp(.8 + .15 * (1 - dist / hw) + (base - .5) * .1, .72, .97) : clamp(base * .5 + .03, .03, .45);
   resolveChance(R() < pf, q);
 }
 function resolveChance(ok, q) {
   const m = UI.m, st = m.st; const [label, k, dd, win, conc, card] = m.opt; st.used.push(k);
-  const tim = q >= .85 ? 'Tempismo perfetto. ' : q >= .7 ? 'Buon tempismo. ' : q < .3 ? 'Tempismo sbagliato. ' : '';
+  const tim = q >= .85 ? 'Tempismo perfetto. ' : q >= .7 ? 'Dentro la zona verde. ' : 'Fuori dalla zona verde. ';
   let txt = '', rk = ok ? 'ok' : 'ko';
   const mm = m.curMin + "' ";
   if (win === 'goal') {
-    if (ok && R() < .78) { m.gu++; st.goals++; txt = '⚽ GOOOL! Hai segnato!'; m.feed.unshift(mm + '⚽ GOL DI ' + esc(S.p.cognome.toUpperCase()) + '!'); }
+    if (ok && R() < (q >= .85 ? .92 : q >= .7 ? .82 : .7)) { m.gu++; st.goals++; txt = '⚽ GOOOL! Hai segnato!'; m.feed.unshift(mm + '⚽ GOL DI ' + esc(S.p.cognome.toUpperCase()) + '!'); }
     else if (ok) { st.stops += .5; txt = '🧤 Gran conclusione, ma il portiere fa un miracolo!'; rk = 'mid'; m.feed.unshift(mm + 'Il portiere ti nega il gol.'); }
     else { st.fails++; txt = pick(['❌ Fuori di poco!', '❌ Tiro debole, para facile.', '❌ Palla in curva.', '❌ Ti rimpallano il tiro.']); m.feed.unshift(mm + 'Occasione sprecata.'); }
   } else if (win === 'assist') {
-    if (ok && R() < .6) { m.gu++; st.assists++; txt = '🎯 ASSIST! Il compagno la mette dentro!'; m.feed.unshift(mm + '⚽ GOL ' + esc(m.ctx.us.n) + ' su assist di ' + esc(S.p.cognome) + '!'); }
-    else if (ok) { st.stops += .5; txt = 'Pallone perfetto… ma il compagno spreca.'; rk = 'mid'; m.feed.unshift(mm + 'Bella giocata, il compagno sbaglia.'); }
+    if (ok && R() < .66) { m.gu++; st.assists++; txt = '🎯 ASSIST! Il compagno la mette dentro!'; m.feed.unshift(mm + '⚽ GOL ' + esc(m.ctx.us.n) + ' su assist di ' + esc(S.p.cognome) + '!'); }
+    else if (ok) { st.stops += .5; txt = '✅ Passaggio perfetto… ma il compagno la spara alta. Non è colpa tua.'; rk = 'mid'; m.feed.unshift(mm + 'Bella giocata, il compagno sbaglia.'); }
     else { st.fails++; txt = '❌ Passaggio intercettato.'; m.feed.unshift(mm + 'Palla persa.'); }
   } else if (win === 'save') {
     if (ok) { st.saves++; txt = '🧤 PARATA! Salvi il risultato!'; m.feed.unshift(mm + '🧤 Grande parata di ' + esc(S.p.cognome) + '.'); }
@@ -113,7 +114,7 @@ function resolveChance(ok, q) {
     else { st.fails++; txt = 'Palla persa, ma rimediate.'; rk = 'mid'; }
   }
   if (card && (!ok || R() < .25)) { st.card++; if (st.card >= 2) { m.red = true; txt += '<br>🟥 Secondo giallo: ESPULSO!'; m.feed.unshift(mm + '🟥 Espulso ' + esc(S.p.cognome) + '.'); } else { txt += '<br>🟨 Ammonito.'; m.feed.unshift(mm + '🟨 Giallo per ' + esc(S.p.cognome) + '.'); } }
-  m.rtxt = tim + '<br>' + txt; m.rk = rk; m.state = 'result'; renderMatch();
+  m.rtxt = tim + '<br>' + txt; m.rk = rk; m.state = m.headless ? 'run' : 'result'; renderMatch();
 }
 function resumeMatch() { const m = UI.m; m.state = 'run'; renderMatch(); runClock(); }
 function penalty(dir) {

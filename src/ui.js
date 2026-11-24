@@ -165,7 +165,7 @@ function renderHome() {
   return `${renderHeader()}
   <div class="card"><div class="tri quad"><div><span>⚡ Energia</span>${bar(p.en, 'var(--acc2)')}</div><div><span>💪 Forma</span>${bar(p.fo, 'var(--acc)')}</div><div><span>😊 Morale</span>${bar(p.mo, 'var(--gold)')}</div><div><span>🤯 Stress</span>${bar(p.stx, p.stx > 70 ? 'var(--red)' : '#ff9f43')}</div></div>${p.stx > 70 ? '<p class="small" style="color:var(--red);margin:6px 0 0">Stress alto: rendi peggio in campo e in allenamento. Esci, rilassati, vedi gente.</p>' : ''}</div>
   ${inj}
-  <div class="card nextc"><div class="lbl">Prossimo impegno</div>${next}<button class="btn" onclick="playSlot()">${info && info.nat ? 'Vai alla sosta' : 'Vai alla partita'} ⚽</button></div>
+  <div class="card nextc"><div class="lbl">Prossimo impegno</div>${next}<div class="row"><button class="btn" onclick="playSlot(false)">${info && info.nat ? 'Vai alla sosta' : 'Gioca'} ⚽</button><button class="btn ghost" onclick="playSlot(true)">Simula ⏩</button></div></div>
   <div class="card"><div class="row"><div class="grow"><div class="lbl">Giorni liberi</div><div class="days">${[0, 1, 2].map(i => `<i class="${i < S.act ? 'on' : ''}"></i>`).join('')}<span class="mut small">${S.act} su 3 questa settimana</span></div></div></div>
   <div class="qa q4"><button onclick="openTrain()">🏃 Allenati</button><button onclick="uiAct('rest')">🛌 Riposa</button><button onclick="openCoach()">🗣️ Mister</button><button onclick="go('city')">🗺️ Città</button></div></div>
   <div class="card"><div class="lbl">Notizie</div>${S.news.slice(0, 10).map(n => `<div class="newsi"><span>${n.ic}</span><p>${n.t}</p></div>`).join('') || '<p class="mut">Ancora niente.</p>'}</div>`;
@@ -353,7 +353,7 @@ function renderTour() {
   return `<div class="scroll"><div class="card center"><div class="lbl">Estate ${S.year + 1}</div><h2>${esc(t.name)}</h2><p class="mut">${t.teams[0].f || ''} ${esc(t.teams[0].n)}</p></div>
   <div class="card"><div class="lbl">Girone</div><table class="tb"><tr><th>#</th><th class="l">Nazionale</th><th>G</th><th>Pt</th></tr>${order.map((i, k) => `<tr class="${i === 0 ? 'me' : ''} ${k < 2 ? 'up' : ''}"><td>${k + 1}</td><td class="l">${t.teams[i].f || badge(t.teams[i].n, 20)} ${esc(t.teams[i].n)}</td><td>${tb[i].p}</td><td><b>${tb[i].pts}</b></td></tr>`).join('')}</table>
   <p>${t.won ? '🏆 CAMPIONI!' : t.out ? '❌ Eliminati' : t.ko >= 0 ? 'Prossimo turno: ' + KO_NAMES[t.ko] : 'Giornata ' + (t.md + 1) + ' di 3'}</p></div>
-  ${done ? `<button class="btn" onclick="makeOffers();save();render()">Torna dal club: offerte di Lino</button>` : `<button class="btn" onclick="playTour()">Gioca la partita ⚽</button>`}</div>`;
+  ${done ? `<button class="btn" onclick="makeOffers();save();render()">Torna dal club: offerte di Lino</button>` : `<div class="row"><button class="btn" onclick="playTour(false)">Gioca ⚽</button><button class="btn ghost" onclick="playTour(true)">Simula ⏩</button></div>`}</div>`;
 }
 function playTour() { S.q = [tourCtx()]; playNext(); }
 
