@@ -68,7 +68,7 @@ function flirtSex(prot) {
   if (p.partner && p.partner.n !== g.n && R() < .35) { news(p.partner.n + ' ha scoperto tutto e ti ha lasciato.', '💔'); ADJ('mo', -15); STX(12); p.partner = null; }
   addContact(g, 35);
   if (g.r >= 9 && p.fame >= 20) { p.fame = clamp(p.fame + .8, 0, 100); news('Paparazzi: ' + igUser() + ' avvistato all’alba con l’influencer ' + g.n + '.', '📸'); }
-  if (recent >= 6) news('Lino ti avverte: "Stai esagerando con le serate, occhio alla salute e alla forma."', '💼');
+  if (recent >= 6) news('Lino: "Guagliò, staje esagerando cu ’e serate. Accuorto â salute e â forma!"', '💼');
 }
 function contactMeet(i) {
   const p = S.p, c = p.contacts[i]; let e;

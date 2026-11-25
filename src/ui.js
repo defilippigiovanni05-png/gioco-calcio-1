@@ -119,7 +119,7 @@ function renderCreate() {
       c.dIds = dIds; c.offers = shuffle(dIds.slice().sort((a, b) => T(a).s - T(b).s).slice(0, 14)).slice(0, 3).map(id => firstOffer(id)); c.S = S;
     } else S = c.S;
     const keep = S; S = null;
-    h += `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · il tuo procuratore<p>"Ciao ${esc(c.nome || 'campione')}! Sono Lino, da oggi curo io i tuoi interessi. Ho parlato con tre società di Serie D che ti vogliono. Scegli tu, poi a fine stagione ti porto le offerte vere."</p></div></div>
+    h += `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · il tuo procuratore<p>"Uè ${esc(c.nome || 'campió')}! Je so’ Lino, ’o procuratore tuojo. Da mo’ ’e fatte tuoje ’e curo io. Aggio parlato cu tre società ’e Serie D ca te vonno. Scigli tu, po’ a fine stagione te porto ’e offerte overe."</p></div></div>
     ${c.offers.map((o, i) => { S = keep; const t = T(o.club), li = leagueOf(o.club); const x = offerCard(o, `<button class="btn" onclick="crSign(${i})">Firma</button>`, t, li); S = null; return x; }).join('')}
     <button class="btn ghost" onclick="crPickOther()">Scegli un\u2019altra squadra di Serie D</button>`;
     S = null;
@@ -136,7 +136,7 @@ function crStep(d) { const c = UI.cr; if (c.step === 1 && d > 0 && (!c.nome.trim
 function crPickOther() { const c = UI.cr; S = c.S; const list = c.dIds.slice().sort((a, b) => T(a).n.localeCompare(T(b).n)); UI.sheet = () => { S = c.S; const h = `<h3>Serie D</h3><div class="col">${list.map(id => `<button class="opt" onclick="crSignId(${id})">${badge(T(id).n, 28)} <b>${esc(T(id).n)}</b><span class="mut small">${esc(leagueOf(id).name)}</span></button>`).join('')}</div>`; S = null; return h; }; S = null; render(); }
 function crSignId(id) { const c = UI.cr; S = c.S; startCareer(firstOffer(id)); }
 function crSign(i) { const c = UI.cr; S = c.S; startCareer(c.offers[i]); }
-function startCareer(of) { signContract(of); UI.cr = null; UI.sheet = null; startSeason(); news('Hai firmato il tuo primo contratto con ' + T(of.club).n + '. Lino: "Questo è solo l\u2019inizio."', '✍️'); save(); UI.tab = 'home'; render(); }
+function startCareer(of) { signContract(of); UI.cr = null; UI.sheet = null; startSeason(); news('Hai firmato il tuo primo contratto con ' + T(of.club).n + '. Lino: "Chesto è sulo ’o principio, guagliò."', '✍️'); save(); UI.tab = 'home'; render(); }
 
 function offerCard(o, btns, t, li) {
   const nat = NATMAP[t.c];
@@ -214,7 +214,7 @@ function openPlace(id) {
     auto: () => `<h3>🚗 Concessionario</h3><p class="mut small">La vecchia auto viene ritirata al 50%.</p><div class="col">${CARS.map((x, i) => o(x.n + ' · ' + money(x.p), p.car >= i ? 'già tua o inferiore' : (p.age < x.age ? 'dai 18 anni' : 'fascino +' + x.ch), `uiAct('buyCar',${i})`, p.car >= i)).join('')}</div>`,
     agenzia: () => `<h3>🏢 Agenzia immobiliare</h3><p class="mut small">Affitto settimanale. Case migliori = più energia e morale.</p><div class="col">${HOUSES.map((x, i) => o(x.n + ' · ' + (x.w ? money(x.w) + '/sett.' : 'gratis'), p.house === i ? 'ci abiti ora' : 'energia +' + x.en + ' a settimana', `uiAct('house',${i})`, p.house === i)).join('')}</div>`,
     charity: () => `<h3>❤️ Evento benefico</h3><div class="col">${o('Dona € 200', 'tifosi e stampa', "uiAct('charity',0)")}${o('Dona € 2.000', 'tifosi e stampa', "uiAct('charity',1)")}${o('Dona € 20.000', 'grande ritorno d\u2019immagine', "uiAct('charity',2)")}</div>`,
-    lino: () => `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · procuratore<p>"${pick(['A fine stagione ti porto le offerte. Tu pensa a giocare bene.', 'Più gol fai, più grandi sono le squadre che chiamano.', 'Le serate vanno bene, ma il mister ti guarda.', 'Con le interviste spavalde fai notizia, ma lo spogliatoio non sempre gradisce.', 'Gli sponsor arrivano quando cresce la notorietà. Ci penso io.'])}"</p></div></div>
+    lino: () => `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · procuratore<p>"${pick(['A fine stagione te porto ’e offerte. Tu pienza a jucà bbuono.', 'Cchiù gol faje, cchiù grosse so’ ’e squadre ca chiammano.', '’E serate vanno bbuono, ma ’o mister te guarda, guagliò.', 'Cu ’e interviste spavalde faje notizia, ma ’o spogliatoio nun sempe gradisce.', '’E sponsor arrivano quanno crisce ’a notorietà. Ce penz’ io.', 'Statte sereno, ccà ce sta Lino.'])}"</p></div></div>
     <div class="kv"><span>Valore di mercato</span><b>${money(marketValue())}</b></div><div class="kv"><span>Stipendio</span><b>${money(S.ct.wage)}/anno</b></div><div class="kv"><span>Scadenza</span><b>${S.year + S.ct.years}</b></div><div class="kv"><span>Ruolo</span><b>${S.ct.role}</b></div><div class="kv"><span>Obiettivo</span><b>${S.ct.obj.txt}</b></div><div class="kv"><span>Commissione Lino</span><b>5%</b></div>
     <div class="lbl">Sponsor</div>${p.sponsors.length ? p.sponsors.map(s => `<div class="kv"><span>${esc(s.n)}</span><b>${money(s.w)}/sett.</b></div>`).join('') : '<p class="mut small">Nessuno ancora: arriveranno con la notorietà (da 20).</p>'}`
   };
@@ -361,7 +361,7 @@ function playTour() { S.q = [tourCtx()]; playNext(); }
 function renderOffers() {
   const c = S.ct, p = S.p, cur = T(c.club);
   const canStay = c.years > 0;
-  return `<div class="scroll"><div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · il tuo procuratore<p>"${S.offers.length ? 'Allora, campione: questa è l\u2019estate delle offerte. Ecco chi ti vuole. Se vuoi alzo il prezzo, ma attento che qualcuno si offende.' : 'Quest\u2019anno nessuno si è fatto avanti. Restiamo e spacchiamo tutto.'}"</p></div></div>
+  return `<div class="scroll"><div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · il tuo procuratore<p>"${S.offers.length ? 'Allora, campió: chesta è l’estate d’’e offerte. Ecco chi te vo’. Si vuò aizo ’o prezzo, ma accuort’ ca quaccheduno s’offende.' : 'Chist’anno nisciuno s’è fatto annanze. Restammo ccà e spaccammo tutto.'}"</p></div></div>
   <div class="card"><div class="kv"><span>Squadra attuale</span><b>${esc(cur.n)}</b></div><div class="kv"><span>Contratto</span><b>${canStay ? 'fino al ' + (S.year + 1 + c.years) : 'scaduto'}</b></div><div class="kv"><span>Valore di mercato</span><b>${money(marketValue())}</b></div><div class="kv"><span>Valutazione</span><b>${ovr()} · ${p.age} anni</b></div></div>
   ${S.offers.map((o, i) => offerCard(o, `<div class="row"><button class="btn" onclick="acceptOffer(${i});render()">Accetta</button><button class="btn ghost" onclick="negoUI(${i},15)" ${o.asked ? 'disabled' : ''}>+15%</button><button class="btn ghost" onclick="negoUI(${i},30)" ${o.asked ? 'disabled' : ''}>+30%</button></div>`, T(o.club), leagueOf(o.club))).join('')}
   ${canStay ? `<button class="btn ghost" onclick="stayNoChange();render()">Rifiuta tutto e resta a ${esc(cur.n)}</button>` : (!S.offers.length ? `<button class="btn" onclick="forceOffer()">Lino, trovami una squadra</button>` : '')}

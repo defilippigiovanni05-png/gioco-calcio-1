@@ -139,7 +139,7 @@ function finishSlot() {
     S.flags.popup = { t: 'Esito degli esami', b: 'Sei risultato positivo all’HIV.<br><br>Il medico della squadra ti ha messo subito in terapia antiretrovirale: con la cura costante puoi allenarti e giocare come prima. La terapia costa € 60 a settimana ed è già attivata.<br><br>D’ora in poi usa sempre il preservativo.' };
   }
   if (p.partner) { p.partner.rel -= 3; if (p.partner.rel <= 0) { news(p.partner.n + ' ti ha lasciato: dice che non ci sei mai.', '💔'); p.mo = clamp(p.mo - 12, 0, 100); p.partner = null; } }
-  SPONSORS.forEach(sp => { if (p.fame >= sp.at && !p.sponsors.find(x => x.n === sp.n)) { p.sponsors.push({ n: sp.n, w: sp.w }); news('Lino ti ha chiuso uno sponsor: ' + sp.n + ' (' + money(sp.w) + ' a settimana).', '🤝'); } });
+  SPONSORS.forEach(sp => { if (p.fame >= sp.at && !p.sponsors.find(x => x.n === sp.n)) { p.sponsors.push({ n: sp.n, w: sp.w }); news('Lino: "T’aggio chiuso nu sponsor: ' + sp.n + ', ' + money(sp.w) + ' a settimana. Nun me ringrazià."', '🤝'); } });
   S.act = 3; S.flags.trained = false; S.flags.night = false;
   skipInvalid();
   if (se.si >= se.slots.length) endSeason();
@@ -272,12 +272,12 @@ function makeOffers() {
   S.offers = offers; S.phase = 'offers';
 }
 function negotiate(i, pct) {
-  const of = S.offers[i]; if (of.asked) return 'Lino: "Abbiamo già tirato la corda con loro, di più non si può."';
+  const of = S.offers[i]; if (of.asked) return 'Lino: "Cu chiste avimmo già tirato ’a corda, cchiù ’e chesto nun se po’."';
   of.asked = pct; const t = T(of.club); const interest = clamp((ovr() - t.s + 6) / 10 + S.p.fame / 200, .15, .92);
   const pOk = pct === 15 ? interest * .95 : interest * .6;
-  if (R() < pOk) { of.wage = Math.round(of.wage * (1 + pct / 100) / 500) * 500; of.bg = Math.round(of.bg * (1 + pct / 100)); return 'Lino: "Fatto! Hanno accettato: ' + money(of.wage) + ' all’anno."'; }
-  if (R() < .5) { S.offers.splice(i, 1); return 'Lino: "Si sono offesi e hanno ritirato l’offerta. Ci sta, andiamo avanti."'; }
-  return 'Lino: "Non si muovono di un euro, l’offerta resta quella di prima."';
+  if (R() < pOk) { of.wage = Math.round(of.wage * (1 + pct / 100) / 500) * 500; of.bg = Math.round(of.bg * (1 + pct / 100)); return 'Lino: "Fatto! Hanno accettato: ' + money(of.wage) + ' a l’anno. Lino nun sbaglia maje."'; }
+  if (R() < .5) { S.offers.splice(i, 1); return 'Lino: "Se so’ offise e se so’ pigliate ’a offerta ’n dereto. Ce sta, jammo annanze."'; }
+  return 'Lino: "Nun se moveno manco ’e n’euro, ’a offerta resta chella ’e primma."';
 }
 function acceptOffer(i) {
   const of = S.offers[i]; const prev = T(S.ct.club).n; signContract(of);
@@ -383,7 +383,7 @@ function flirtSex(prot) {
   if (p.partner && R() < .35) { news(p.partner.n + ' ha scoperto tutto e ti ha lasciato.', '💔'); ADJ('mo', -15); p.partner = null; }
   if (p.contacts.length >= 8) p.contacts.shift();
   p.contacts.push({ n: F.girl.n, rel: 25 });
-  if (recent >= 6) news('Lino ti avverte: "Stai esagerando con le serate, occhio alla salute e alla forma."', '💼');
+  if (recent >= 6) news('Lino: "Guagliò, staje esagerando cu ’e serate. Accuorto â salute e â forma!"', '💼');
 }
 
 // livello di convocazione: maggiore, Under 21 o Under 19 (non esclusivo: se sei fortissimo ti chiama la maggiore anche a 16 anni)

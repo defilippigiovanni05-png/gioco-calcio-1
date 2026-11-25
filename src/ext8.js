@@ -51,7 +51,7 @@ makeOffers = function () {
   if (S.ct.years <= 0 ? (o >= cur.s - 6 && perf > -6) : (perf > 2 || R() < .25)) offers.unshift(makeOffer(S.ct.club, 'renew'));
   offers.sort((a, b) => (b.kind === 'renew') - (a.kind === 'renew') || T(b.club).s - T(a.club).s);
   S.offers = offers; S.phase = 'offers';
-  S.linoMsg = perf > 6 ? 'Stagione da urlo: gli osservatori ti hanno visto tutti.' : perf > 1 ? 'Buona stagione, qualcuno si è mosso.' : perf > -4 ? 'Stagione così così: chi ti vuole è più o meno al tuo livello.' : 'Stagione difficile, campione. Il telefono ha squillato poco: devi giocare di più e meglio.';
+  S.linoMsg = perf > 6 ? 'Stagione ’a paura, guagliò: l’osservatori t’hanno visto tutte quante.' : perf > 1 ? 'Bona stagione, quaccheduno s’è muoss’.' : perf > -4 ? 'Stagione accussì accussì: chi te vo’ è cchiù o meno ’o livello tuojo.' : 'Stagione difficile, campió. ’O telefono ha squillato poco: he ’a jucà ’e cchiù e meglio.';
 };
 renderOffers = (function (orig) { return function () { let h = orig(); if (S.linoMsg) h = h.replace(/<p>"[^<]*"<\/p>/, `<p>"${esc(S.linoMsg)}"</p>`); return h; }; })(renderOffers);
 
@@ -77,7 +77,7 @@ finishSlot = (function (orig) {
       S.flags.janDone = true;
       const { offers } = offersByMerit(2, true);
       if (offers.length) { S.jan = { offers, until: S.abs + 2 }; news('Mercato di gennaio: Lino ha ' + (offers.length === 1 ? 'un’offerta' : offers.length + ' offerte') + ' per te. Hai due settimane per decidere.', '📞'); }
-      else news('Mercato di gennaio: nessuna offerta. Lino: "Gioca bene e a giugno ne riparliamo."', '📞');
+      else news('Mercato di gennaio: nessuna offerta. Lino: "Joca bbuono e a giugno ne parlammo."', '📞');
       save();
     }
     if (S.jan && S.abs > S.jan.until) { S.jan = null; news('Il mercato di gennaio si è chiuso.', '🔒'); save(); }
@@ -85,7 +85,7 @@ finishSlot = (function (orig) {
 })(finishSlot);
 function janOpen() {
   if (!S.jan) return;
-  openSheet(() => `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · mercato di gennaio<p>"Campione, a metà stagione si è mosso qualcuno. Se accetti ti trasferisci subito e finisci la stagione con loro: la coppa però l’hai già giocata con l’altra squadra."</p></div></div>
+  openSheet(() => `<div class="card lino"><div class="linoav">🧔🏻</div><div><b>Lino</b> · mercato di gennaio<p>"Campió, a mità stagione s’è muoss’ quaccheduno. Si accietti te trasferisci subbito e fernisci ’a stagione cu lloro: ’a coppa però l’he già jucata cu ’a squadra ’e primma."</p></div></div>
   ${S.jan.offers.map((o, i) => offerCard(o, `<div class="row"><button class="btn" onclick="janAccept(${i})">Accetta</button></div>`, T(o.club), leagueOf(o.club))).join('')}
   <button class="btn ghost" onclick="S.jan=null;save();closeSheet();toast('Resti dove sei.')">Rifiuta e resta</button>`);
 }
